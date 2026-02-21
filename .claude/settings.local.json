@@ -15,7 +15,9 @@
       "Bash(git remote add:*)",
       "Bash(git push:*)",
       "Bash(start:*)",
-      "WebFetch(domain:blog.naver.com)"
+      "WebFetch(domain:blog.naver.com)",
+      "Bash(VERCEL_ORG_ID=team_AuYwkROhtuw7h5OwsERQxfL3 npx vercel:*)",
+      "Bash(VERCEL_ORG_ID=team_AuYwkROhtuw7h5OwsERQxfL3 VERCEL_PROJECT_ID=landing-260217 npx vercel:*)"
     ]
   }
 }
