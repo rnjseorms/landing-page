@@ -26,8 +26,7 @@ export default function FloatingCTA() {
   }
 
   const handleKakaoClick = () => {
-    const kakaoChannelId = process.env.NEXT_PUBLIC_KAKAO_CHANNEL_ID || '_placeholder'
-    window.open(`https://pf.kakao.com/${kakaoChannelId}`, '_blank')
+    window.open('https://open.kakao.com/o/sL3gxyth', '_blank')
   }
 
   return (

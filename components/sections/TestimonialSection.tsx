@@ -78,11 +78,11 @@ export default function TestimonialSection() {
               768: { slidesPerView: 2 },
               1024: { slidesPerView: 3 },
             }}
-            className="pb-12"
+            className="!pb-0"
           >
             {testimonials.map((testimonial, index) => (
               <SwiperSlide key={index}>
-                <div className="bg-white rounded-xl shadow-md p-6 h-full">
+                <div className="bg-white rounded-xl shadow-md p-6 h-full min-h-[320px] flex flex-col">
                   {/* Stars */}
                   <div className="flex gap-1 mb-4">
                     {[...Array(5)].map((_, i) => (
@@ -98,7 +98,7 @@ export default function TestimonialSection() {
                   </div>
 
                   {/* Content */}
-                  <p className="text-gray-600 mb-6 line-clamp-4">
+                  <p className="text-gray-600 mb-6 line-clamp-4 flex-grow">
                     "{testimonial.content}"
                   </p>
 
@@ -113,7 +113,7 @@ export default function TestimonialSection() {
                   </div>
 
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100 mt-auto">
                     <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold">
                       {testimonial.avatar}
                     </div>
