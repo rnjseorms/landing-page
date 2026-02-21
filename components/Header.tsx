@@ -38,6 +38,7 @@ export default function Header() {
 
   const navItems = [
     { label: '회사소개', id: 'about', href: '/about' },
+    { label: '컨설팅', id: 'consulting', href: '/consulting' },
     { label: '정책자금 안내', id: 'funding' },
     { label: '고객 후기', id: 'testimonials' },
     { label: 'FAQ', id: 'faq' },
