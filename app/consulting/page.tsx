@@ -1,8 +1,5 @@
 'use client'
 
-import { useState } from 'react'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'motion/react'
 import Header from '@/components/Header'
@@ -65,72 +62,6 @@ const consultingPackages = [
 ]
 
 export default function ConsultingPage() {
-  const { data: session } = useSession()
-  const router = useRouter()
-  const [selectedPackage, setSelectedPackage] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-
-  const handlePurchase = async (packageId: string) => {
-    if (!session) {
-      router.push('/auth/login?callbackUrl=/consulting')
-      return
-    }
-
-    setIsLoading(true)
-    setSelectedPackage(packageId)
-
-    const pkg = consultingPackages.find(p => p.id === packageId)
-    if (!pkg) return
-
-    try {
-      // Request payment info from server
-      const response = await fetch('/api/payments/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          packageId: pkg.id,
-          packageName: pkg.name,
-          amount: pkg.price,
-          customerEmail: session.user?.email,
-          customerName: session.user?.name,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (data.success && data.clientKey) {
-        // Load Toss Payments SDK dynamically
-        const { loadTossPayments } = await import('@tosspayments/payment-sdk')
-        const tossPayments = await loadTossPayments(data.clientKey)
-
-        // Request payment with Toss Payments
-        await tossPayments.requestPayment('카드', {
-          amount: data.amount,
-          orderId: data.orderId,
-          orderName: data.orderName,
-          customerName: data.customerName || '고객',
-          customerEmail: data.customerEmail,
-          successUrl: data.successUrl,
-          failUrl: data.failUrl,
-        })
-      } else {
-        alert(data.message || '결제 요청에 실패했습니다.')
-      }
-    } catch (error: unknown) {
-      const tossError = error as { code?: string; message?: string }
-      if (tossError.code === 'USER_CANCEL') {
-        // User cancelled payment - do nothing
-        console.log('결제가 취소되었습니다.')
-      } else {
-        console.error('Payment error:', error)
-        alert(tossError.message || '결제 처리 중 오류가 발생했습니다.')
-      }
-    } finally {
-      setIsLoading(false)
-      setSelectedPackage(null)
-    }
-  }
-
   return (
     <>
       <Header />
@@ -177,7 +108,7 @@ export default function ConsultingPage() {
                     pkg.popular
                       ? 'border-teal-500/50 shadow-lg shadow-teal-500/20'
                       : 'border-slate-800'
-                  }`}
+                  } hover:border-slate-700 transition-colors group`}
                 >
                   {pkg.popular && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2">
@@ -225,27 +156,16 @@ export default function ConsultingPage() {
                     ))}
                   </ul>
 
-                  <button
-                    onClick={() => handlePurchase(pkg.id)}
-                    disabled={isLoading && selectedPackage === pkg.id}
-                    className={`w-full py-4 rounded-xl font-bold transition-all duration-300 ${
+                  <Link
+                    href={`/consulting/${pkg.id}`}
+                    className={`block w-full py-4 rounded-xl font-bold text-center transition-all duration-300 ${
                       pkg.popular
                         ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-teal-500/25 hover:-translate-y-0.5'
                         : 'bg-slate-800 text-white hover:bg-slate-700'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    }`}
                   >
-                    {isLoading && selectedPackage === pkg.id ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                        </svg>
-                        처리 중...
-                      </span>
-                    ) : (
-                      '결제하기'
-                    )}
-                  </button>
+                    자세히 보기
+                  </Link>
                 </motion.div>
               ))}
             </div>
