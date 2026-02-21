@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@auth/firebase-adapter": "^2.11.1",
-    "@tosspayments/payment-sdk": "^1.9.2",
+    "@tosspayments/tosspayments-sdk": "^2.5.0",
     "clsx": "^2.1.1",
     "firebase": "^12.9.0",
     "motion": "^12.34.0",

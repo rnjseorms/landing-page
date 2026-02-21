@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { motion } from 'motion/react'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
+import { createOrUpdateUser } from '@/lib/firestore'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -43,12 +44,19 @@ export default function SignupPage() {
         return
       }
 
-      // Create user in Firebase
+      // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
 
       // Update display name
       await updateProfile(userCredential.user, {
         displayName: name,
+      })
+
+      // Save user to Firestore
+      await createOrUpdateUser({
+        uid: userCredential.user.uid,
+        email: email,
+        name: name,
       })
 
       // Sign in with NextAuth

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { updatePaymentStatus } from '@/lib/firestore'
 
 const TOSS_SECRET_KEY = process.env.TOSS_SECRET_KEY || ''
 
@@ -32,6 +33,13 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       console.error('Toss payment confirmation failed:', data)
+
+      // Update payment status to failed in Firestore
+      await updatePaymentStatus(orderId, {
+        status: 'failed',
+        paymentKey,
+      })
+
       return NextResponse.json(
         {
           success: false,
@@ -42,9 +50,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Payment successful - save to database here
-    // For now, we just return success
-    // TODO: Save payment record to Firestore
+    // Payment successful - update Firestore
+    await updatePaymentStatus(orderId, {
+      status: 'completed',
+      paymentKey: data.paymentKey,
+      method: data.method,
+      approvedAt: data.approvedAt ? new Date(data.approvedAt) : undefined,
+      receipt: data.receipt?.url,
+    })
 
     return NextResponse.json({
       success: true,

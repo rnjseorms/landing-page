@@ -4,6 +4,7 @@ import { useState, FormEvent } from 'react'
 import { motion } from 'motion/react'
 import { Input, Select, Checkbox } from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
+import { saveLeadForm } from '@/lib/firestore'
 
 interface FormData {
   name: string
@@ -85,8 +86,20 @@ export default function LeadFormSection() {
     setIsSubmitting(true)
 
     try {
-      const SCRIPT_URL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || ''
+      // Save to Firestore
+      await saveLeadForm({
+        companyName: formData.industry, // Using industry as company type
+        contactName: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        employees: '', // Not collected in this form
+        revenue: formData.fundingAmount,
+        fundingTypes: [formData.industry],
+        message: formData.marketingConsent ? '마케팅 수신 동의' : '',
+      })
 
+      // Also save to Google Sheets (if configured)
+      const SCRIPT_URL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || ''
       if (SCRIPT_URL) {
         await fetch(SCRIPT_URL, {
           method: 'POST',

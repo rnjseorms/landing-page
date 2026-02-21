@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, Suspense, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'motion/react'
@@ -18,9 +18,14 @@ function PaymentSuccessContent() {
   } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const isConfirmingRef = useRef(false)
 
   useEffect(() => {
     const confirmPayment = async () => {
+      // Prevent duplicate calls (React StrictMode or re-renders)
+      if (isConfirmingRef.current) return
+      isConfirmingRef.current = true
+
       const paymentKey = searchParams.get('paymentKey')
       const orderId = searchParams.get('orderId')
       const amount = searchParams.get('amount')
@@ -47,7 +52,10 @@ function PaymentSuccessContent() {
         if (data.success) {
           setPaymentInfo(data.payment)
         } else {
-          setError(data.message || '결제 승인에 실패했습니다.')
+          // Ignore "already processing" error if we already have payment info
+          if (data.code !== 'ALREADY_PROCESSING_REQUEST') {
+            setError(data.message || '결제 승인에 실패했습니다.')
+          }
         }
       } catch (err) {
         setError('결제 확인 중 오류가 발생했습니다.')

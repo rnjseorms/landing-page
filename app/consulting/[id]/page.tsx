@@ -206,17 +206,28 @@ export default function ConsultingDetailPage() {
       const data = await response.json()
 
       if (data.success && data.clientKey) {
-        const { loadTossPayments } = await import('@tosspayments/payment-sdk')
+        const { loadTossPayments } = await import('@tosspayments/tosspayments-sdk')
         const tossPayments = await loadTossPayments(data.clientKey)
+        const payment = tossPayments.payment({ customerKey: session.user?.email || 'guest' })
 
-        await tossPayments.requestPayment('카드', {
-          amount: data.amount,
+        await payment.requestPayment({
+          method: 'CARD',
+          amount: {
+            currency: 'KRW',
+            value: data.amount,
+          },
           orderId: data.orderId,
           orderName: data.orderName,
           customerName: data.customerName || '고객',
           customerEmail: data.customerEmail,
           successUrl: data.successUrl,
           failUrl: data.failUrl,
+          card: {
+            useEscrow: false,
+            flowMode: 'DEFAULT',
+            useCardPoint: false,
+            useAppCardOnly: false,
+          },
         })
       } else {
         alert(data.message || '결제 요청에 실패했습니다.')

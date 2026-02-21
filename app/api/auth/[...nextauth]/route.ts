@@ -46,7 +46,7 @@ if (auth) {
           return {
             id: user.uid,
             email: user.email,
-            name: user.displayName,
+            name: user.displayName || user.email?.split('@')[0],
             image: user.photoURL,
           }
         } catch (error: unknown) {
@@ -56,6 +56,9 @@ if (auth) {
           }
           if (firebaseError.code === 'auth/wrong-password') {
             throw new Error('비밀번호가 올바르지 않습니다.')
+          }
+          if (firebaseError.code === 'auth/invalid-credential') {
+            throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.')
           }
           throw new Error('로그인에 실패했습니다.')
         }

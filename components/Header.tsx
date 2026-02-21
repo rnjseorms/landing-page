@@ -268,6 +268,17 @@ export default function Header() {
                     <p className="font-medium">{session.user?.name}</p>
                     <p className="text-sm opacity-70">{session.user?.email}</p>
                   </div>
+                  <Link
+                    href="/mypage"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`block py-3 px-4 rounded-xl font-medium ${
+                      isScrolled
+                        ? 'text-gray-700 hover:bg-gray-100'
+                        : 'text-white/90 hover:bg-white/10'
+                    }`}
+                  >
+                    마이페이지
+                  </Link>
                   <button
                     onClick={() => {
                       setIsMobileMenuOpen(false)
