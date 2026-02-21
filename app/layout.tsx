@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import AuthProvider from '@/components/providers/AuthProvider'
 
 const siteUrl = "https://your-domain.com" // 배포 후 실제 도메인으로 변경
 
@@ -102,7 +103,9 @@ export default function RootLayout({
         />
       </head>
       <body className="font-pretendard antialiased">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )
