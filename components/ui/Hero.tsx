@@ -11,7 +11,7 @@ interface HeroAction {
   onClick?: () => void
 }
 
-interface HeroProps extends React.HTMLAttributes<HTMLElement> {
+interface HeroProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
   gradient?: boolean
   blur?: boolean
   title: React.ReactNode
