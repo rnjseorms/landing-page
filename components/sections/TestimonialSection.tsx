@@ -3,6 +3,7 @@
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination } from 'swiper/modules'
+import { useState, useEffect } from 'react'
 import 'swiper/css'
 import 'swiper/css/pagination'
 
@@ -51,6 +52,11 @@ const testimonials = [
 
 export default function TestimonialSection() {
   const { ref, isVisible } = useScrollAnimation<HTMLDivElement>()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <section className="py-20 bg-gray-50">
@@ -68,6 +74,7 @@ export default function TestimonialSection() {
             정책자금을 성공적으로 받으신 분들의 생생한 후기입니다
           </p>
 
+          {mounted ? (
           <Swiper
             modules={[Autoplay, Pagination]}
             spaceBetween={24}
@@ -126,6 +133,20 @@ export default function TestimonialSection() {
               </SwiperSlide>
             ))}
           </Swiper>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {testimonials.slice(0, 3).map((testimonial, index) => (
+                <div key={index} className="bg-white rounded-xl shadow-md p-6 h-full min-h-[320px] flex flex-col animate-pulse">
+                  <div className="h-5 bg-gray-200 rounded w-24 mb-4"></div>
+                  <div className="h-20 bg-gray-200 rounded mb-6"></div>
+                  <div className="flex gap-3 mb-6">
+                    <div className="h-6 bg-gray-200 rounded w-20"></div>
+                    <div className="h-6 bg-gray-200 rounded w-16"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

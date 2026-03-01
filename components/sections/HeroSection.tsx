@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, useScroll, useTransform } from 'motion/react'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { TextRotate } from '@/components/ui/TextRotate'
 
 const rotatingTexts = [
@@ -11,8 +11,24 @@ const rotatingTexts = [
   "전문가 무료 상담",
 ]
 
+// 고정된 파티클 위치 (Hydration 에러 방지)
+const particlePositions = [
+  { left: 10, top: 20 }, { left: 25, top: 45 }, { left: 40, top: 15 },
+  { left: 55, top: 70 }, { left: 70, top: 30 }, { left: 85, top: 55 },
+  { left: 15, top: 80 }, { left: 30, top: 60 }, { left: 45, top: 35 },
+  { left: 60, top: 85 }, { left: 75, top: 10 }, { left: 90, top: 40 },
+  { left: 5, top: 50 }, { left: 20, top: 75 }, { left: 35, top: 25 },
+  { left: 50, top: 90 }, { left: 65, top: 5 }, { left: 80, top: 65 },
+  { left: 95, top: 45 }, { left: 12, top: 95 },
+]
+
 export default function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"]
@@ -32,13 +48,13 @@ export default function HeroSection() {
     <section ref={containerRef} className="relative z-0 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-slate-950">
       {/* Animated Background Particles */}
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
+        {mounted && particlePositions.map((pos, i) => (
           <motion.div
             key={i}
             className="absolute w-2 h-2 rounded-full bg-cyan-500/20"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${pos.left}%`,
+              top: `${pos.top}%`,
             }}
             animate={{
               y: [0, -30, 0],
@@ -46,9 +62,9 @@ export default function HeroSection() {
               scale: [1, 1.5, 1],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 3 + (i % 5) * 0.4,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: (i % 10) * 0.2,
             }}
           />
         ))}
